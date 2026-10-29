@@ -17,11 +17,14 @@
 import { customTags } from '../util/custom-tags'
 import {
   StreamLanguage,
-  type LanguageSupport,
+  LanguageSupport,
   type Language,
   type LanguageDescription,
-  foldNodeProp
+  foldNodeProp,
+  foldService
 } from '@codemirror/language'
+import type { Extension } from '@codemirror/state'
+import { headingSectionFolding } from '../commands/folding'
 
 // Import all the languages, first the "new" ones
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
@@ -190,7 +193,7 @@ export interface MarkdownParserConfig {
 // This file returns a syntax extension that provides parsing and syntax
 // capabilities
 export default function markdownParser (config?: MarkdownParserConfig): LanguageSupport {
-  return markdown({
+  const support = markdown({
     base: markdownLanguage,
     codeLanguages: (infoString) => {
       // infostrings must start with the language and can be surrounded by curly
@@ -312,4 +315,12 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
       ]
     }
   })
+
+  // Replace the heading folding of the Markdown language support, which only
+  // considers heading levels, with our own, which also considers indentation.
+  // NOTE: `markdown()` does not export its fold service, so we identify it as
+  // the one extension that provides the `foldService` facet.
+  const extensions = (support.support as Extension[])
+    .filter(ext => (ext as { facet?: unknown }).facet !== foldService)
+  return new LanguageSupport(support.language, [ headingSectionFolding, extensions ])
 }
