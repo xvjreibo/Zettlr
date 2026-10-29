@@ -194,7 +194,7 @@ module.exports = {
     force: false // NOTE: By now covered by the global flag on packaging.
   },
   packagerConfig: {
-    appBundleId: 'com.zettlr.app',
+    appBundleId: 'com.klotz.app',
     // This info.plist file contains file association for the app on macOS.
     extendInfo: './scripts/assets/info.plist',
     asar: {
@@ -214,7 +214,7 @@ module.exports = {
     // lowercase is preferred). Due to the last issue (Linux binaries being
     // with capital Z) we have to explicitly set executableName on the Linux
     // target.
-    name: 'Zettlr',
+    name: 'Klotz',
     // The certificate is written to the default keychain during CI build.
     // See ./scripts/add-osx-cert.sh
     osxSign: {
@@ -243,8 +243,7 @@ module.exports = {
     // include the Pandoc binary (this is why we cannot leave `extraResource`
     // undefined).
     extraResource: process.platform === 'darwin' ? [
-      'resources/icons/icon.code.icns',
-      'resources/icons/Assets.car' // Contains the new Liquid Glass app icon
+      'resources/icons/icon.code.icns'
     ] : []
   },
   plugins: [
