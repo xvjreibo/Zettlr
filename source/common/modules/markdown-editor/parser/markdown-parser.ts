@@ -218,6 +218,10 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
     },
     addKeymap: false,
     extensions: {
+      // Klotz does not work with code: Indented and fenced code blocks as well
+      // as inline code are parsed as regular text. (Math still works, since it
+      // has its own parsers.)
+      remove: [ 'IndentedCode', 'FencedCode', 'InlineCode' ],
       props: [
         customFoldNodeProp
       ],
