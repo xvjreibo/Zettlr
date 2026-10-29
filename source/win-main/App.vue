@@ -563,6 +563,12 @@ const toolbarControls = computed<ToolbarControl[]>(() => {
       visible: getToolbarButtonDisplay('showInsertFootnoteButton')
     },
     {
+      type: 'button',
+      id: 'foldAllH4',
+      title: trans('Fold all level 4 headings'),
+      icon: 'collapse-card'
+    },
+    {
       type: 'spacer',
       size: '3x'
     },
@@ -939,7 +945,7 @@ function handleClick (clickedID?: string): void {
     // The user clicked a command button, so we just have to run that.
     editorCommands.value.data = clickedID
     editorCommands.value.executeCommand = !editorCommands.value.executeCommand
-  } else if (clickedID === 'insertFootnote') {
+  } else if (clickedID === 'insertFootnote' || clickedID === 'foldAllH4') {
     editorCommands.value.data = clickedID
     editorCommands.value.executeCommand = !editorCommands.value.executeCommand
   } else if (clickedID === 'open-updater') {
