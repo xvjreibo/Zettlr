@@ -564,8 +564,8 @@ const toolbarControls = computed<ToolbarControl[]>(() => {
     },
     ...[ 2, 3, 4, 5, 6 ].map(level => ({
       type: 'button' as const,
-      id: `foldAllH${level}`,
-      title: trans('Fold all level %s headings', level),
+      id: `toggleFoldH${level}`,
+      title: trans('Fold or unfold all level %s headings', level),
       buttonText: `H${level}`,
       icon: ''
     })),
@@ -946,7 +946,7 @@ function handleClick (clickedID?: string): void {
     // The user clicked a command button, so we just have to run that.
     editorCommands.value.data = clickedID
     editorCommands.value.executeCommand = !editorCommands.value.executeCommand
-  } else if (clickedID === 'insertFootnote' || (clickedID !== undefined && /^foldAllH[2-6]$/.test(clickedID))) {
+  } else if (clickedID === 'insertFootnote' || (clickedID !== undefined && /^toggleFoldH[2-6]$/.test(clickedID))) {
     editorCommands.value.data = clickedID
     editorCommands.value.executeCommand = !editorCommands.value.executeCommand
   } else if (clickedID === 'open-updater') {
