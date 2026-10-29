@@ -14,7 +14,7 @@
 
 import { deepStrictEqual, strictEqual } from 'assert'
 import { EditorState, type Transaction } from '@codemirror/state'
-import { codeFolding, foldEffect, foldState } from '@codemirror/language'
+import { codeFolding, foldable, foldEffect, foldService, foldState } from '@codemirror/language'
 import { toggleFoldHeadings } from 'source/common/modules/markdown-editor/commands/folding'
 import markdownParser from 'source/common/modules/markdown-editor/parser/markdown-parser'
 
@@ -127,5 +127,53 @@ describe('MarkdownEditor#toggleFoldHeadings()', function () {
     const { result, folded } = runToggles('# One\n\nText\n\n### Three\n\nText', [4])
     strictEqual(result, false)
     deepStrictEqual(folded, [])
+  })
+})
+
+/**
+ * Returns the start and end line numbers of the foldable section of the
+ * heading on the given line, or null if it has none.
+ */
+function sectionOf (doc: string, lineNo: number): [number, number]|null {
+  const state = EditorState.create({ doc, extensions: [ markdownParser(), codeFolding() ] })
+  const line = state.doc.line(lineNo)
+  const range = foldable(state, line.from, line.to)
+  return range === null ? null : [ state.doc.lineAt(range.from).number, state.doc.lineAt(range.to).number ]
+}
+
+describe('MarkdownEditor#headingSectionFolding', function () {
+  it('should replace the Markdown heading fold service', function () {
+    const state = EditorState.create({ doc: '', extensions: [markdownParser()] })
+    strictEqual(state.facet(foldService).length, 1)
+  })
+
+  it('should nest more indented headings of the same level', function () {
+    const doc = '#### A\n  #### B\n  Text B\n#### C\nText C'
+    deepStrictEqual(sectionOf(doc, 1), [ 1, 3 ])
+    deepStrictEqual(sectionOf(doc, 2), [ 2, 3 ])
+    deepStrictEqual(sectionOf(doc, 4), [ 4, 5 ])
+  })
+
+  it('should end a section at a less indented heading of any level', function () {
+    const doc = '  # A\n  Text A\n#### B\nText B'
+    deepStrictEqual(sectionOf(doc, 1), [ 1, 2 ])
+  })
+
+  it('should use heading levels among equally indented headings', function () {
+    const doc = '  ## A\n  ### B\n  Text B\n  ## C\n  Text C'
+    deepStrictEqual(sectionOf(doc, 1), [ 1, 3 ])
+    deepStrictEqual(sectionOf(doc, 2), [ 2, 3 ])
+  })
+
+  it('should exclude trailing empty lines and not fold empty sections', function () {
+    deepStrictEqual(sectionOf('#### A\nText\n\n\n#### B', 1), [ 1, 2 ])
+    strictEqual(sectionOf('#### A\n\n#### B', 1), null)
+  })
+
+  it('should fold nested indented headings with the level buttons', function () {
+    const { folded } = runToggles('#### A\n  #### B\n  Text B\n#### C\nText C', [4])
+    // Nested folds are not reported in document order, so sort them
+    folded.sort((a, b) => a[0] - b[0])
+    deepStrictEqual(folded, [ [ 1, 3 ], [ 2, 3 ], [ 4, 5 ] ])
   })
 })
