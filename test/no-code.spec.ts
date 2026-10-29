@@ -57,4 +57,8 @@ describe('MarkdownEditor#markdownParser() without code and math', function () {
   it('should parse inline and block math as regular text', function () {
     deepStrictEqual(findNodes('Inline $a^2$ math\n\n$$\nb^2\n$$', codeNodes), [])
   })
+
+  it('should parse headings indented with four spaces or a tab as headings', function () {
+    deepStrictEqual(findNodes('#### A\n    #### B\n\n\t#### C', [ ...codeNodes, 'ATXHeading4' ]), [ 'ATXHeading4', 'ATXHeading4', 'ATXHeading4' ])
+  })
 })
