@@ -87,7 +87,6 @@ import { nix } from '@replit/codemirror-lang-nix'
 import { citationParser } from './citation-parser'
 import { footnoteComposite, footnoteParser, footnoteRefParser } from './footnote-parser'
 import { frontmatterParser, yamlCodeParse } from './frontmatter-parser'
-import { inlineMathParser, blockMathParser } from './math-parser'
 import { pandocLinkParser } from './pandoc-link-parser'
 import { gridTableParser, pipeTableParser } from './pandoc-table-parser'
 import { type ZknLinkParserConfig, zknLinkParser } from './zkn-link-parser'
@@ -218,9 +217,9 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
     },
     addKeymap: false,
     extensions: {
-      // Klotz does not work with code: Indented and fenced code blocks as well
-      // as inline code are parsed as regular text. (Math still works, since it
-      // has its own parsers.)
+      // Klotz does not work with code or math: Indented and fenced code blocks
+      // as well as inline code are parsed as regular text. (Math is parsed as
+      // regular text by not adding the math parsers below.)
       remove: [ 'IndentedCode', 'FencedCode', 'InlineCode' ],
       props: [
         customFoldNodeProp
@@ -237,8 +236,6 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
         admonitionParser,
         // This BlockParser parses YAML frontmatters
         frontmatterParser,
-        // This BlockParser parses math blocks
-        blockMathParser,
         footnoteRefParser,
         gridTableParser,
         pipeTableParser
@@ -246,7 +243,6 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
       parseInline: [
         // Add inline parsers that add AST elements for various additional types
         pandocSpanParser,
-        inlineMathParser,
         footnoteParser,
         citationParser,
         zknLinkParser(config?.zknLinkParserConfig),

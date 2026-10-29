@@ -2,14 +2,13 @@
  * @ignore
  * BEGIN HEADER
  *
- * Contains:        Tests that code is not parsed
+ * Contains:        Tests that code and math are not parsed
  * CVM-Role:        TESTING
  * Maintainers:     Hendrik Erz
  * License:         GNU GPL v3
  *
- * Description:     Klotz does not work with code. This file tests that the
- *                  Markdown parser treats code as regular text, but still
- *                  parses math.
+ * Description:     Klotz does not work with code or math. This file tests
+ *                  that the Markdown parser treats both as regular text.
  *
  * END HEADER
  */
@@ -38,7 +37,7 @@ function findNodes (doc: string, names: string[]): string[] {
 
 const codeNodes = [ 'IndentedCode', 'FencedCode', 'InlineCode', 'CodeBlock', 'CodeText' ]
 
-describe('MarkdownEditor#markdownParser() without code', function () {
+describe('MarkdownEditor#markdownParser() without code and math', function () {
   it('should parse indented lines as a paragraph', function () {
     deepStrictEqual(findNodes('Text\n\n    1\n    2\n    3', [ ...codeNodes, 'Paragraph' ]), [ 'Paragraph', 'Paragraph' ])
   })
@@ -55,7 +54,7 @@ describe('MarkdownEditor#markdownParser() without code', function () {
     deepStrictEqual(findNodes('Some `inline` code', codeNodes), [])
   })
 
-  it('should still parse inline and block math', function () {
-    deepStrictEqual(findNodes('Inline $a^2$ math\n\n$$\nb^2\n$$', [ 'InlineCode', 'FencedCode' ]), [ 'InlineCode', 'FencedCode' ])
+  it('should parse inline and block math as regular text', function () {
+    deepStrictEqual(findNodes('Inline $a^2$ math\n\n$$\nb^2\n$$', codeNodes), [])
   })
 })
