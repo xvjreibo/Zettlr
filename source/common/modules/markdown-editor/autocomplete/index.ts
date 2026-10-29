@@ -76,8 +76,9 @@ const autocompleteSource: CompletionSource = function (ctx): CompletionResult|nu
   let plugin: AutocompletePlugin|undefined
   let startpos = ctx.pos
 
-  // NOTE: Headings has to be checked before tags
-  for (const p of [ codeBlocks, citations, files, headings, tags, snippets ]) {
+  // NOTE: Headings has to be checked before tags. Klotz does not parse code,
+  // so the code block language autocomplete is not offered.
+  for (const p of [ citations, files, headings, tags, snippets ]) {
     const res = p.applies(ctx)
     if (res !== false) {
       plugin = p
