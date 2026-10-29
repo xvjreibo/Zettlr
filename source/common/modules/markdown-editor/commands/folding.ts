@@ -13,18 +13,27 @@
  */
 
 import type { StateCommand } from '@codemirror/state'
-import { ensureSyntaxTree, foldable, foldEffect, syntaxTree } from '@codemirror/language'
+import {
+  ensureSyntaxTree,
+  foldable,
+  foldEffect,
+  foldState,
+  syntaxTree,
+  unfoldEffect
+} from '@codemirror/language'
 
 /**
- * Returns a StateCommand that folds the sections of all headings of the given
- * level in the document.
+ * Returns a StateCommand that toggles the folding of the sections of all
+ * headings of the given level in the document: If at least one of these
+ * sections is unfolded, folds all of them. If all of them are already folded,
+ * unfolds them. Folded sections of other levels remain untouched.
  *
  * @param   {number}        level  The heading level (1-6)
  *
  * @return  {StateCommand}         A StateCommand that returns whether any
- *                                 section was folded.
+ *                                 section was folded or unfolded.
  */
-export function foldHeadings (level: number): StateCommand {
+export function toggleFoldHeadings (level: number): StateCommand {
   return ({ state, dispatch }) => {
     // Make sure we see every heading, even in long documents
     const tree = ensureSyntaxTree(state, state.doc.length, 1000) ?? syntaxTree(state)
@@ -53,7 +62,23 @@ export function foldHeadings (level: number): StateCommand {
       return false
     }
 
-    dispatch(state.update({ effects: ranges.map(range => foldEffect.of(range)) }))
+    const folded = state.field(foldState, false)
+    const isFolded = ({ from, to }: { from: number, to: number }): boolean => {
+      let found = false
+      folded?.between(from, from, (a, b) => {
+        if (a === from && b === to) {
+          found = true
+        }
+      })
+      return found
+    }
+
+    const unfolded = ranges.filter(range => !isFolded(range))
+    const effects = unfolded.length > 0
+      ? unfolded.map(range => foldEffect.of(range))
+      : ranges.map(range => unfoldEffect.of(range))
+
+    dispatch(state.update({ effects }))
     return true
   }
 }

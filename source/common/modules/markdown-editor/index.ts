@@ -78,7 +78,7 @@ import {
   applyPandocDivOrSpan
 } from './commands/markdown'
 import { addNewFootnote } from './commands/footnotes'
-import { foldHeadings } from './commands/folding'
+import { toggleFoldHeadings } from './commands/folding'
 
 // Utilities
 import { copyAsHTML, pasteAsPlain } from './util/copy-paste-cut'
@@ -639,12 +639,12 @@ export default class MarkdownEditor extends EventEmitter {
       case 'markdownMakeTaskList':
         applyTaskList(this._instance)
         break
-      case 'foldAllH2':
-      case 'foldAllH3':
-      case 'foldAllH4':
-      case 'foldAllH5':
-      case 'foldAllH6':
-        foldHeadings(parseInt(cmd.slice(-1), 10))(this._instance)
+      case 'toggleFoldH2':
+      case 'toggleFoldH3':
+      case 'toggleFoldH4':
+      case 'toggleFoldH5':
+      case 'toggleFoldH6':
+        toggleFoldHeadings(parseInt(cmd.slice(-1), 10))(this._instance)
         break
       default:
         console.warn('Unimplemented command:', cmd)
