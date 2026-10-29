@@ -24,7 +24,6 @@ import {
   foldService
 } from '@codemirror/language'
 import type { Extension } from '@codemirror/state'
-import { headingSectionFolding } from '../commands/folding'
 
 // Import all the languages, first the "new" ones
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
@@ -316,11 +315,12 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
     }
   })
 
-  // Replace the heading folding of the Markdown language support, which only
-  // considers heading levels, with our own, which also considers indentation.
+  // Remove the heading folding of the Markdown language support, which only
+  // considers heading levels. Heading folding, which also considers
+  // indentation, is provided by `markdownFolding` (code-folding/markdown.ts).
   // NOTE: `markdown()` does not export its fold service, so we identify it as
   // the one extension that provides the `foldService` facet.
   const extensions = (support.support as Extension[])
     .filter(ext => (ext as { facet?: unknown }).facet !== foldService)
-  return new LanguageSupport(support.language, [ headingSectionFolding, extensions ])
+  return new LanguageSupport(support.language, extensions)
 }
