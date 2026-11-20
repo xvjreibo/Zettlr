@@ -61,4 +61,19 @@ describe('MarkdownEditor#markdownParser() without code and math', function () {
   it('should parse headings indented with four spaces or a tab as headings', function () {
     deepStrictEqual(findNodes('#### A\n    #### B\n\n\t#### C', [ ...codeNodes, 'ATXHeading4' ]), [ 'ATXHeading4', 'ATXHeading4', 'ATXHeading4' ])
   })
+
+  it('should let indented headings, list items and blockquotes start after text', function () {
+    const names = [ 'ATXHeading4', 'ListItem', 'Blockquote' ]
+    deepStrictEqual(findNodes('Text\n    #### A\nText\n    * Item\nText\n    > Quote', names), [ 'ATXHeading4', 'ListItem', 'Blockquote' ])
+  })
+
+  it('should keep indented list items separate after indented text', function () {
+    const doc = '   ### Anna Pfeiffer\n    * Born:\n        Maria Anna Kruse\n        c. 1831\n    * Died:\n        c. 1909\n    * Religion: Catholic'
+    deepStrictEqual(findNodes(doc, ['ListItem']), [ 'ListItem', 'ListItem', 'ListItem' ])
+    deepStrictEqual(findNodes('    1. One\n        more\n    2. Two', ['ListItem']), [ 'ListItem', 'ListItem' ])
+  })
+
+  it('should keep other indented lines in the paragraph', function () {
+    deepStrictEqual(findNodes('Text\n    more text\n    * * *\n    2. Not a list', [ 'Paragraph', 'ListItem', 'HorizontalRule' ]), ['Paragraph'])
+  })
 })

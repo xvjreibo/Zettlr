@@ -95,6 +95,7 @@ import { highlightParser } from './highlight-parser'
 import { zknTagParser } from './zkn-tag-parser'
 import { pandocDivComposite, pandocDivParser, pandocSpanParser } from './pandoc-div-span-parser'
 import { admonitionComposite, admonitionParser } from './admonition-parser'
+import { indentedBlockParser } from './indented-block-parser'
 
 const codeLanguages: Array<{ mode: Language|LanguageDescription|null, selectors: string[] }> = [
   { mode: markdownLanguage, selectors: [ 'markdown', 'md' ] },
@@ -238,7 +239,9 @@ export default function markdownParser (config?: MarkdownParserConfig): Language
         frontmatterParser,
         footnoteRefParser,
         gridTableParser,
-        pipeTableParser
+        pipeTableParser,
+        // Let indented headings, lists and blockquotes interrupt paragraphs
+        indentedBlockParser
       ],
       parseInline: [
         // Add inline parsers that add AST elements for various additional types
