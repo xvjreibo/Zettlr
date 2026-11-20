@@ -46,6 +46,15 @@ describe('MarkdownEditor#headingIndent', function () {
     deepStrictEqual(markedIndents('# A\n  Text\n  * Item\n\n  > Quote'), [])
   })
 
+  it('should mark lines of indented headings', function () {
+    const win = window as unknown as Record<string, unknown>
+    win.requestAnimationFrame ??= (cb: () => void) => setTimeout(cb, 0)
+    const view = new EditorView({ state: EditorState.create({ doc: '# A\n  ## B\nText', extensions: [ markdownParser(), headingIndent() ] }) })
+    const lines = [...view.contentDOM.querySelectorAll('.cm-line')].map(l => l.classList.contains('cm-heading-indent-line'))
+    view.destroy()
+    deepStrictEqual(lines, [ false, true, false ])
+  })
+
   it('should mark setext headings', function () {
     deepStrictEqual(markedIndents('  Title\n  ====='), ['"  " Title'])
   })

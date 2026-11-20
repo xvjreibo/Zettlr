@@ -327,7 +327,9 @@ body.dark {
 }
 
 .cm-content { --cm-text-font-size: 1em; }
-.cm-heading-indent {
+.cm-heading-indent,
+/* Tabs (see plugins/visual-indent.ts) */
+.cm-heading-indent-line > .rendered-space {
   font-size: var(--cm-text-font-size);
   font-weight: normal;
   font-style: normal;
