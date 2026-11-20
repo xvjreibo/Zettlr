@@ -48,6 +48,7 @@ import { formattingToolbar, footnoteHover, filePreview, urlHover } from './toolt
 import { type EditorConfiguration, configField } from './util/configuration'
 import { highlightRanges } from './plugins/highlight-ranges'
 import { markdownFolding } from './code-folding/markdown'
+import { headingIndent } from './plugins/heading-indent'
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 import { softwrapVisualIndent } from './plugins/visual-indent'
 import { backgroundLayers } from './plugins/code-background'
@@ -338,6 +339,7 @@ export function getMarkdownExtensions (options: CoreExtensionOptions): Extension
     defaultContextMenu, // A default context menu
     softwrapVisualIndent, // Always indent visually
     tagClasses(), // Apply a custom class to each tag so that users can style them (#4589)
+    headingIndent(), // Render the leading whitespace of headings at regular size
     EditorView.domEventHandlers(options.domEventsListeners)
   ]
 }

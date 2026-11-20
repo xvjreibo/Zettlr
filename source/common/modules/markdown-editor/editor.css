@@ -311,3 +311,19 @@ body.dark {
     border: none;
   }
 }
+
+/*
+ * Render the leading whitespace of headings at the size of regular text, so
+ * that indented headings align with equally indented text (see
+ * plugins/heading-indent.ts). Since the property is registered as a length,
+ * `1em` resolves to the size of regular text on `.cm-content`, and headings
+ * inherit that absolute size.
+ */
+@property --cm-text-font-size {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 16px;
+}
+
+.cm-content { --cm-text-font-size: 1em; }
+.cm-heading-indent { font-size: var(--cm-text-font-size); }
