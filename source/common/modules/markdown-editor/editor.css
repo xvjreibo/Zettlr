@@ -317,7 +317,8 @@ body.dark {
  * that indented headings align with equally indented text (see
  * plugins/heading-indent.ts). Since the property is registered as a length,
  * `1em` resolves to the size of regular text on `.cm-content`, and headings
- * inherit that absolute size.
+ * inherit that absolute size. Bold whitespace may be narrower, so reset the
+ * weight and style as well.
  */
 @property --cm-text-font-size {
   syntax: '<length>';
@@ -326,4 +327,8 @@ body.dark {
 }
 
 .cm-content { --cm-text-font-size: 1em; }
-.cm-heading-indent { font-size: var(--cm-text-font-size); }
+.cm-heading-indent {
+  font-size: var(--cm-text-font-size);
+  font-weight: normal;
+  font-style: normal;
+}
